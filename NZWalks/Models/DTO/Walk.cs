@@ -1,5 +1,4 @@
-﻿using NZWalks.Models.Domain;
-
+﻿
 namespace NZWalks.Models.DTO
 {
     public class Walk

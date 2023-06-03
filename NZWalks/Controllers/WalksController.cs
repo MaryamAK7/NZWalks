@@ -17,6 +17,7 @@ namespace NZWalks.Controllers
         public WalksController(IWalkRepository walkRepository, IMapper mapper)
         {
             this.walkRepository = walkRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -28,7 +29,7 @@ namespace NZWalks.Controllers
         }
 
         [HttpGet]
-        [Route("{id:Guid}")]
+        [Route("{Id:Guid}")]
         [ActionName("GetById")]
         public async Task<IActionResult> GetById(Guid Id)
         {
@@ -39,7 +40,7 @@ namespace NZWalks.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddWalk(AddWalkRequest newWalk)
+        public async Task<IActionResult> AddWalk([FromBody] AddWalkRequest newWalk)
         {
             var domWalk = new Models.Domain.Walk()
             {
@@ -55,7 +56,8 @@ namespace NZWalks.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateWalk (Guid Id, UpdateWalkRequest newWalk)
+        [Route("{Id:Guid}")]
+        public async Task<IActionResult> UpdateWalk (Guid Id,[FromBody] UpdateWalkRequest newWalk)
         {
             var domWalk = new Models.Domain.Walk()
             {

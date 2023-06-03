@@ -13,7 +13,7 @@ namespace NZWalks.Repositories
         }
         public async Task<IEnumerable<Walk>> GetAll()
         {
-           return await NZWalksDbContext.Walks.ToListAsync(); 
+           return await NZWalksDbContext.Walks.Include(x => x.Region).Include(x => x.WalkDifficulty).ToListAsync(); 
         } 
         public async Task<Walk> GetAsync(Guid id)
         {
