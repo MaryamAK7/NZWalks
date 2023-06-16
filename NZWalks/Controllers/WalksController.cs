@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NZWalks.CustomActionFilter;
 using NZWalks.Models.Domain;
 using NZWalks.Models.DTO;
 using NZWalks.Repositories;
@@ -21,9 +22,12 @@ namespace NZWalks.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        // api/Walks?filterOn=Name&filterQuery=Track
+        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
+            [FromQuery] string? sortby, [FromQuery] bool? isAsc,
+            [FromQuery] int pageNumber =1 , [FromQuery] int pageSize = 1000)
         {
-            var walks = await walkRepository.GetAll();
+            var walks = await walkRepository.GetAll(filterOn,filterQuery, sortby, isAsc ?? true,pageNumber, pageSize);
             var walkDto = mapper.Map<List<Models.DTO.Walk>>(walks);
             return Ok(walkDto);
         }
@@ -40,8 +44,9 @@ namespace NZWalks.Controllers
         }
 
         [HttpPost]
+        [ValidateModelAttribute]
         public async Task<IActionResult> AddWalk([FromBody] AddWalkRequest newWalk)
-        {
+        { 
             var domWalk = new Models.Domain.Walk()
             {
                 Name = newWalk.Name,
@@ -53,6 +58,7 @@ namespace NZWalks.Controllers
             if(walk == null) return NotFound();
             var walkdto = mapper.Map<Models.DTO.Walk>(walk);
             return CreatedAtAction(nameof(GetById), new { Id = walkdto.Id }, walkdto); 
+ 
         }
 
         [HttpPut]

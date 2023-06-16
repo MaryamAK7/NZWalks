@@ -11,9 +11,27 @@ namespace NZWalks.Repositories
         {
             NZWalksDbContext = context;
         }
-        public async Task<IEnumerable<Walk>> GetAll()
-        {
-           return await NZWalksDbContext.Walks.Include(x => x.Region).Include(x => x.WalkDifficulty).ToListAsync(); 
+        public async Task<IEnumerable<Walk>> GetAll(string? filterOn = null, string? filterQuery = null,
+            string? sortby = null, bool isAsc = true,
+            int pageNumber = 1,int pageSize = 1000 )
+        {   var walks = NZWalksDbContext.Walks.Include(x => x.Region).Include(x => x.WalkDifficulty).AsQueryable(); 
+            if(string.IsNullOrWhiteSpace(filterOn) == false || string.IsNullOrWhiteSpace(filterQuery) == false)
+            {
+                if(filterOn.Equals("Name",StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = walks.Where(x => x.Name.Contains(filterQuery));
+                }
+            }
+            if (string.IsNullOrWhiteSpace(sortby) == false)
+            {
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    walks = isAsc ? walks.OrderBy(x => x.Name) : walks.OrderByDescending(x => x.Name);
+                }
+            }
+            var skipResults = (pageNumber - 1) * pageSize;
+
+            return await walks.Skip(skipResults).Take(pageSize).ToListAsync(); 
         } 
         public async Task<Walk> GetAsync(Guid id)
         {
