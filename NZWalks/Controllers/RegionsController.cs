@@ -62,6 +62,8 @@ namespace NZWalks.Controllers
         [HttpPost]
         public async Task<IActionResult> AddRegion(AddRegionRequest addRegionRequest)
         {
+            if (ModelState.IsValid)
+            {
             //Request to domain model
             var region = new Models.Domain.Region()
             {
@@ -87,6 +89,11 @@ namespace NZWalks.Controllers
 
             };
             return CreatedAtAction(nameof(GetRegionAsync), new { id = regionDto.Id }, response);
+
+            } else
+            {
+                return BadRequest(ModelState);
+            }
         }
 
         [HttpDelete]
