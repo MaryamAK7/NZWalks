@@ -12,6 +12,7 @@ namespace NZWalks.Data
         public DbSet<Region> Regions { get; set; }
         public DbSet<Walk> Walks { get; set; }
         public DbSet<WalkDifficulty> WalkDifficulty { get; set; }
+        public DbSet<Image> Images { get; set; }
 
         // haydi eza bdi zid data 3l database awal mna fadye b3ml ba3da migration
         // (Add migration "Migname" w Update-Database 7ata ynzedu
