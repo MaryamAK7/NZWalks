@@ -6,6 +6,7 @@ using NZWalks.Data;
 using NZWalks.Models.Domain;
 using NZWalks.Models.DTO;
 using NZWalks.Repositories;
+using System.Text.Json;
 
 namespace NZWalks.Controllers
 {
@@ -16,36 +17,36 @@ namespace NZWalks.Controllers
     {
         private readonly IRegionRepository regionRepository;
         private readonly IMapper mapper;
+        private readonly ILogger<RegionsController> logger;
 
-        public RegionsController(IRegionRepository regionRepository, IMapper mapper)
+        public RegionsController(IRegionRepository regionRepository, IMapper mapper, ILogger<RegionsController> logger)
         {
             this.regionRepository = regionRepository;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         [HttpGet]
         [Authorize(Roles ="Reader")]
         public async Task<IActionResult> GetAllRegions()
         {
+            try
+            {
+           // throw new Exception("this is an exception");
             var regions = await regionRepository.GetAllAsync();
-            //var regionsDTO = new List<Models.DTO.Region>();
+            logger.LogInformation("Get All region action method was invoked");
+            logger.LogWarning("This is a warning");
+            logger.LogError("This is an Error");
 
-            //regions.ToList().ForEach(region =>
-            //{
-            //    var regionDTO = new Models.DTO.Region()
-            //    {
-            //        Id = region.Id,
-            //        Name = region.Name,
-            //        Area= region.Area,
-            //        Code= region.Code,
-            //        Lat= region.Lat,
-            //        Long= region.Long,
-            //        Population= region.Population,  
-            //    };
-            //    regionsDTO.Add(regionDTO);
-            //});
             var regionsDTO = mapper.Map<List<Models.DTO.Region>>(regions);
+            logger.LogInformation($"Finish Get All region with data{JsonSerializer.Serialize(regionsDTO)}");
+
             return Ok(regionsDTO);
+            } catch(Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         [HttpGet]

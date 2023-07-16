@@ -6,6 +6,7 @@ using NZWalks.CustomActionFilter;
 using NZWalks.Models.Domain;
 using NZWalks.Models.DTO;
 using NZWalks.Repositories;
+using System.Net;
 
 namespace NZWalks.Controllers
 {
@@ -29,9 +30,21 @@ namespace NZWalks.Controllers
             [FromQuery] string? sortby, [FromQuery] bool? isAsc,
             [FromQuery] int pageNumber =1 , [FromQuery] int pageSize = 1000)
         {
-            var walks = await walkRepository.GetAll(filterOn,filterQuery, sortby, isAsc ?? true,pageNumber, pageSize);
-            var walkDto = mapper.Map<List<Models.DTO.Walk>>(walks);
-            return Ok(walkDto);
+            //try
+            //{
+                var walks = await walkRepository.GetAll(filterOn, filterQuery, sortby, isAsc ?? true, pageNumber, pageSize);
+                var walkDto = mapper.Map<List<Models.DTO.Walk>>(walks);
+
+            //mimic an exception to test global error handling    
+            throw new Exception("this was the error");
+
+                return Ok(walkDto);
+             
+            //}
+            //catch (Exception ex)
+            //{
+            //    return Problem("Something went wrong", null, (int)HttpStatusCode.InternalServerError); 
+            //}
         }
 
         [HttpGet]
